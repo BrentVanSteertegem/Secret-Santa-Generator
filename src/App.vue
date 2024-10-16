@@ -7,7 +7,6 @@ import PersonCard from './components/PersonCard.vue'
 const people = ref([])
 
 function addPerson(person) {
-  if(!$overlay) setOverlay()
   people.value.push(person)
 }
 
@@ -21,14 +20,13 @@ function setOverlay() {
 }
 
 function jumpScare() {
-  const randomTimeout = Math.floor(Math.random() * 2000) + 1000
-  const randomDisplayTime = Math.floor(Math.random() * 10) + 100
+  if(!$overlay) setOverlay()
   setTimeout(() => {
     $overlay.classList.remove('hidden')
     setTimeout(() => {
       $overlay.classList.add('hidden')
-    }, randomDisplayTime)
-  }, randomTimeout)
+    }, 200)
+  }, 2000)
 }
 </script>
 
