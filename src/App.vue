@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import './styles/index.css'
 import AddForm from './components/AddForm.vue'
-import PersonCard from './components/PersonCard.vue'
+import PersonList from './components/PersonList.vue'
 
 const people = ref([])
 
@@ -34,11 +34,7 @@ function jumpScare() {
   <div class="bg-green-950 text-neutral-50 w-screen h-screen p-4 flex flex-col gap-8">
     <AddForm @addPerson="addPerson" @jumpscare="jumpScare"/>
     <div class="c-overlay hidden absolute h-screen w-screen top-0 left-0"/>
-    <ul class="flex flex-wrap justify-center gap-2">
-      <li v-for="(person, i) in people" :key="i">
-        <PersonCard :name="person.name" @removePerson="() => removePerson(i)" @selectPerson="selectPerson"/>
-      </li>
-    </ul>
+    <PersonList :people="people" @removePerson="removePerson"/>
   </div>
 </template>
 
