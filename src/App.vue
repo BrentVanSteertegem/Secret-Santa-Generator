@@ -19,6 +19,7 @@ function setOverlay() {
   $overlay = document.querySelector('.c-overlay')
 }
 
+const jumpScareTrigger = 'jelle'
 function jumpScare() {
   if(!$overlay) setOverlay()
   setTimeout(() => {
@@ -32,9 +33,17 @@ function jumpScare() {
 
 <template>
   <div class="bg-green-950 text-neutral-50 w-screen h-screen p-4 flex flex-col gap-8">
-    <AddForm @addPerson="addPerson" @jumpscare="jumpScare"/>
+    <AddForm
+      :people="people"
+      :jumpScareTrigger="jumpScareTrigger"
+      @addPerson="addPerson"
+      @jumpscare="jumpScare"
+    />
     <div class="c-overlay hidden absolute h-screen w-screen top-0 left-0"/>
-    <PersonList :people="people" @removePerson="removePerson"/>
+    <PersonList
+      :people="people"
+      @removePerson="removePerson"
+    />
   </div>
 </template>
 

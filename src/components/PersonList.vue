@@ -14,8 +14,16 @@
 
 <template>
     <ul class="flex flex-wrap justify-center gap-2">
-        <li v-for="(person, i) in props.people" :key="i">
-          <PersonCard :name="person.name" @removePerson="removePerson" @selectPerson="selectPerson"/>
+        <li
+            v-for="(person, i) in props.people"
+            :key="i"
+        >
+            <PersonCard
+                :name="person.name"
+                :people="props.people"
+                @removePerson="removePerson"
+                @selectPerson="selectPerson"
+            />
         </li>
       </ul>
 </template>
