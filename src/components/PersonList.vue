@@ -13,10 +13,11 @@
 </script>
 
 <template>
-    <ul class="flex flex-wrap justify-center gap-2">
+    <ul class="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-2 gap-y-3">
         <li
             v-for="(person, i) in props.people"
             :key="i"
+            class="w-full"
         >
             <PersonCard
                 :name="person.name"
