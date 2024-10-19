@@ -14,6 +14,10 @@
     people.value.splice(index, 1)
   }
 
+  function manageExceptions(index, exceptions) {
+    people.value[index].exceptions = exceptions
+  }
+
   let $overlay
   function setOverlay() {
     $overlay = document.querySelector('.c-overlay')
@@ -33,7 +37,7 @@
 
 <template>
   <div class="bg-green-950 text-neutral-50 w-screen h-screen-full min-h-screen flex justify-center">
-    <div class="max-w-7xl w-full flex flex-col gap-8 p-4">
+    <div class="max-w-screen-2xl w-full flex flex-col gap-8 p-4">
       <AddForm
         :people="people"
         :jumpScareTrigger="jumpScareTrigger"
@@ -44,6 +48,7 @@
       <PersonList
         :people="people"
         @removePerson="removePerson"
+        @manageExceptions="manageExceptions"
       />
     </div>
   </div>
