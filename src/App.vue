@@ -11,11 +11,36 @@
   }
 
   function removePerson(index) {
-    people.value.splice(index, 1)
+    const peopleCopy = people.value
+    peopleCopy.splice(index, 1)
+    people.value = [...peopleCopy]
   }
 
   function manageExceptions(index, exceptions) {
     people.value[index].exceptions = exceptions
+  }
+
+  function generateList() {
+    people.value = [
+      {
+        name: 'Person 1'
+      },
+      {
+        name: 'Person 2'
+      },
+      {
+        name: 'Person 3'
+      },
+      {
+        name: 'Person 4'
+      },
+      {
+        name: 'Person 5'
+      },
+      {
+        name: 'Person 6'
+      }
+    ]
   }
 
   let $overlay
@@ -37,14 +62,23 @@
 
 <template>
   <div class="bg-green-950 text-neutral-50 w-screen h-screen-full min-h-screen flex justify-center">
+    <div class="c-overlay hidden absolute h-screen w-screen top-0 left-0 z-20"/>
     <div class="max-w-screen-2xl w-full flex flex-col gap-8 p-4">
-      <AddForm
-        :people="people"
-        :jumpScareTrigger="jumpScareTrigger"
-        @addPerson="addPerson"
-        @jumpscare="jumpScare"
-      />
-      <div class="c-overlay hidden absolute h-screen w-screen top-0 left-0"/>
+      <div class="flex flex-col gap-4 items-center">
+        <AddForm
+          :people="people"
+          :jumpScareTrigger="jumpScareTrigger"
+          @addPerson="addPerson"
+          @jumpscare="jumpScare"
+        />
+        <button
+          @click="generateList"
+          class="w-60 sm:w-[408px] bg-red-800 border border-neutral-100/70 p-2 rounded-lg hover:bg-red-700 hover:border-white ease-in-out duration-300"
+        >
+          Generate list
+        </button>
+   
+      </div>
       <PersonList
         :people="people"
         @removePerson="removePerson"

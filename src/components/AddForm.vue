@@ -47,10 +47,19 @@ function listenForChange($event) {
 
 <template>
   <div class="flex justify-center bg-inherit">
-    <div class="flex flex-col w-60 gap-2">
-      <input type="text" v-model="name" @keypress="listenForChange"
-        class="border border-white bg-inherit p-2 rounded-lg text-center focus:outline-none" />
-      <button @click="addPerson" class="border border-white p-2 rounded-lg">Add</button>
+    <div class="flex max-sm:flex-col gap-2">
+      <input
+        type="text"
+        v-model="name"
+        @keypress="listenForChange"
+        class="w-60 border border-white bg-inherit p-2 rounded-lg text-center focus:outline-none" 
+      />
+      <button
+        @click="addPerson"
+        class="w-60 sm:w-40 bg-red-800 border border-neutral-100/70 p-2 rounded-lg hover:bg-red-700 hover:border-white ease-in-out duration-300"
+      >
+        Add
+      </button>
     </div>
   </div>
 </template>

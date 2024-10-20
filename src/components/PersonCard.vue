@@ -12,8 +12,8 @@
 
     const emit = defineEmits(['removePerson', 'manageExceptions'])
 
-    function onClickRemove($event) {
-        emit('removePerson', $event)
+    function onClickRemove() {
+        emit('removePerson', props.index)
     }
 
     function onClickManageExceptions() {
