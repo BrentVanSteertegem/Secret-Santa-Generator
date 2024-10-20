@@ -7,12 +7,12 @@
 
     const emit = defineEmits(['removePerson', 'manageExceptions'])
 
-    const removePerson = (index) => {
-        emit('removePerson', index)
+    const removePerson = (name) => {
+        emit('removePerson', name)
     }
 
-    const manageExceptions = (index, exceptions) => {
-        emit('manageExceptions', index, exceptions)
+    const manageExceptions = (name, exceptions) => {
+        emit('manageExceptions', name, exceptions)
     }
 </script>
 

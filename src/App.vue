@@ -1,23 +1,40 @@
 <script setup>
-  import { ref } from 'vue'
+  import { onMounted, ref } from 'vue'
   import './styles/index.css'
   import AddForm from './components/AddForm.vue'
   import PersonList from './components/PersonList.vue'
-
+  
+  let $window
+  onMounted(() => {
+    $window = window
+    $window.addEventListener('click', () => {
+      const personCards = [...document.querySelectorAll('.c-person-card')]
+      personCards.forEach((personCard, i) => {
+        const $manageExceptionsModal = document.querySelectorAll('.c-exceptions-modal')[i]
+        personCard.classList.remove('z-20')
+        $manageExceptionsModal.classList.add('hidden')
+        $manageExceptionsModal.classList.remove('flex')
+        const $manageExceptionsButton = document.querySelectorAll('.c-btn-add-exception')[i]
+        $manageExceptionsButton.classList.remove('bg-neutral-200')
+        $manageExceptionsButton.classList.remove('text-red-950')
+      })
+    })
+  })  
+  
   const people = ref([])
 
   function addPerson(person) {
     people.value.push(person)
   }
 
-  function removePerson(index) {
+  function removePerson(name) {
     const peopleCopy = people.value
-    peopleCopy.splice(index, 1)
+    peopleCopy.splice(people.value[`${name}`], 1)
     people.value = [...peopleCopy]
   }
 
-  function manageExceptions(index, exceptions) {
-    people.value[index].exceptions = exceptions
+  function manageExceptions(name, exceptions) {
+    people.value[`${name}`].exceptions = exceptions
   }
 
   function generateList() {
@@ -62,7 +79,7 @@
 
 <template>
   <div class="bg-green-950 text-neutral-50 w-screen h-screen-full min-h-screen flex justify-center">
-    <div class="c-overlay hidden absolute h-screen w-screen top-0 left-0 z-20"/>
+    <div class="c-overlay hidden absolute h-screen w-screen top-0 left-0 z-30"/>
     <div class="max-w-screen-2xl w-full flex flex-col gap-8 p-4">
       <div class="flex flex-col gap-4 items-center">
         <AddForm
