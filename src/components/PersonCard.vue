@@ -1,5 +1,5 @@
 <script setup>
-    import { watch } from 'vue'
+    import { watchEffect } from 'vue'
     const props = defineProps({
         people: Array,
         index: Number
@@ -9,7 +9,7 @@
     let $personCard
     let $addExceptionButton
     let $exceptionsModal
-    watch(() => {
+    watchEffect(() => {
         person = props.people[props.index]
         setPersonCard()
         setaddExceptionButton()
@@ -49,9 +49,8 @@
     function onClickException(e, name) {
         e.stopPropagation()
 
-        if (person.exceptions && person.exceptions.length === props.people.length - 2) {
-            onClickAddExceptionButton(e)
-            $addExceptionButton && $addExceptionButton.classList.add('hidden')
+        if (person.exceptions && props.people.length - person.exceptions.length < 3 || props.people.length < 3) {
+            return window.alert('Person needs at least available person to buy for')
         }
 
         emit('manageExceptions', props.index, person.exceptions && [...person.exceptions, name] || [name])

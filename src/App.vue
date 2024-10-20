@@ -22,6 +22,7 @@
   })  
   
   const people = ref([])
+  const generatedList = ref([])
 
   function addPerson(person) {
     people.value.push(person)
@@ -38,26 +39,42 @@
   }
 
   function generateList() {
-    people.value = [
-      {
-        name: 'Person 1'
-      },
-      {
-        name: 'Person 2'
-      },
-      {
-        name: 'Person 3'
-      },
-      {
-        name: 'Person 4'
-      },
-      {
-        name: 'Person 5'
-      },
-      {
-        name: 'Person 6'
+    if (people.value.length < 2) {
+      return
+    }
+    const sortedPeople = [...people.value].sort((a,b) => {
+      return (a.exceptions && a.exceptions.length || 0) - (b.exceptions && b.exceptions.length || 0)
+    })
+    
+    let success = false
+    let failed = false
+    let tries = 0
+    while (!success && !failed) {
+      const list = []
+      const remainingPeople = [...sortedPeople]
+      sortedPeople.forEach(person => {
+        const availablePeople = remainingPeople.filter(p => p.name !== person.name && (person.exceptions ? !person.exceptions.includes(p.name) : true))
+        if (!availablePeople || availablePeople.length === 0) {
+          if (tries < 2) {
+            tries++
+          } else {
+            window.alert('Could not generate list')
+            failed = true
+          }
+          return
+        }
+        const randomPerson = availablePeople[Math.floor(Math.random() * availablePeople.length)]
+        list.push({
+          from: person.name,
+          to: randomPerson.name
+        })
+        remainingPeople.splice(remainingPeople.indexOf(randomPerson), 1)
+      })
+      if (list.length === people.value.length) {
+        success = true
+        generatedList.value = [...list]
       }
-    ]
+    }
   }
 
   let $overlay
@@ -98,6 +115,7 @@
       </div>
       <PersonList
         :people="people"
+        :generatedList="generatedList"
         @removePerson="removePerson"
         @manageExceptions="manageExceptions"
       />
