@@ -68,7 +68,13 @@
     <div class="c-person-card relative h-full">
         <section class="bg-red-800 p-4 rounded-lg flex-col gap-3 relative z-10">
             <section class="w-full gap-2">
-                <span class="w-20 h-20 rounded-lg bg-red-950" />
+                <div class="w-20 h-20 rounded-lg bg-red-950 flex justify-center items-center">
+                    <img
+                        class="w-5/6 h-5/6 object-contain rounded-lg"
+                        :src="require(`@/assets/avatars/${person.avatar}.png`)"
+                        alt="Avatar"
+                    />
+                </div>
                 <section class="c-person-card-header flex-col gap-2 justify-between py-1">
                     <section class="justify-between items-center">
                     <h3 class="text-2xl leading-none">

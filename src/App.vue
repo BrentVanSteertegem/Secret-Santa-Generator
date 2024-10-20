@@ -3,6 +3,7 @@
   import './styles/index.css'
   import AddForm from './components/AddForm.vue'
   import PersonList from './components/PersonList.vue'
+import GeneratedList from './components/GeneratedList.vue';
   
   let $window
   onMounted(() => {
@@ -39,9 +40,15 @@
   }
 
   function generateList() {
-    if (people.value.length < 2) {
+    if (generatedList.value.length > 0) {
+      generatedList.value = []
       return
     }
+    if (people.value.length < 2) {
+      window.alert('Need at least 2 people to generate list')
+      return
+    }
+
     const sortedPeople = [...people.value].sort((a,b) => {
       return (a.exceptions && a.exceptions.length || 0) - (b.exceptions && b.exceptions.length || 0)
     })
@@ -58,7 +65,7 @@
           if (tries < 2) {
             tries++
           } else {
-            window.alert('Could not generate list')
+            window.alert('Unable to generate list, please adapt exceptions')
             failed = true
           }
           return
@@ -95,13 +102,14 @@
 </script>
 
 <template>
-  <div class="bg-green-950 text-neutral-50 w-screen h-screen-full min-h-screen flex justify-center">
+  <div class="c-app text-neutral-50 w-screen h-screen-full min-h-screen flex justify-center">
     <div class="c-overlay hidden absolute h-screen w-screen top-0 left-0 z-30"/>
     <div class="max-w-screen-2xl w-full flex flex-col gap-8 p-4">
       <div class="flex flex-col gap-4 items-center">
         <AddForm
           :people="people"
           :jumpScareTrigger="jumpScareTrigger"
+          :disabled="generatedList.length > 0"
           @addPerson="addPerson"
           @jumpscare="jumpScare"
         />
@@ -109,21 +117,29 @@
           @click="generateList"
           class="w-60 sm:w-[408px] bg-red-800 border border-neutral-100/70 p-2 rounded-lg hover:bg-red-700 hover:border-white ease-in-out duration-300"
         >
-          Generate list
+          {{generatedList.length === 0 ? 'Generate list' : 'Edit people'}}
         </button>
    
       </div>
       <PersonList
+        v-if="generatedList.length === 0"
         :people="people"
-        :generatedList="generatedList"
         @removePerson="removePerson"
         @manageExceptions="manageExceptions"
+      />
+      <GeneratedList
+        v-else
+        :generatedList="generatedList"
       />
     </div>
   </div>
 </template>
 
 <style>
+  .c-app {
+    background:  linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url('./assets/background.jpg') no-repeat center center ;
+    background-size: cover;
+  }
   .c-overlay {
     background: url('./assets/jelle.png') no-repeat center center;
   }
