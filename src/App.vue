@@ -3,8 +3,8 @@
   import './styles/index.css'
   import AddForm from './components/AddForm.vue'
   import PersonList from './components/PersonList.vue'
-import GeneratedList from './components/GeneratedList.vue';
-  
+  import GeneratedList from './components/GeneratedList.vue'
+
   let $window
   onMounted(() => {
     $window = window
@@ -20,6 +20,10 @@ import GeneratedList from './components/GeneratedList.vue';
         $manageExceptionsButton.classList.remove('text-red-950')
       })
     })
+
+    setTimeout(() => {
+      jumpScare()
+    }, 5000)
   })  
   
   const people = ref([])
@@ -62,7 +66,7 @@ import GeneratedList from './components/GeneratedList.vue';
       sortedPeople.forEach(person => {
         const availablePeople = remainingPeople.filter(p => p.name !== person.name && (person.exceptions ? !person.exceptions.includes(p.name) : true))
         if (!availablePeople || availablePeople.length === 0) {
-          if (tries < 2) {
+          if (tries < 20) {
             tries++
           } else {
             window.alert('Unable to generate list, please adapt exceptions')
@@ -89,7 +93,7 @@ import GeneratedList from './components/GeneratedList.vue';
     $overlay = document.querySelector('.c-overlay')
   }
 
-  const jumpScareTrigger = 'jelle'
+  const jumpScareTrigger = process.env.VUE_APP_JUMPSCARE_TRIGGER
   function jumpScare() {
     if(!$overlay) setOverlay()
     setTimeout(() => {
