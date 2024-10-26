@@ -66,9 +66,9 @@
 
 <template>
     <div class="c-person-card relative h-full">
-        <section class="bg-red-800 p-4 rounded-lg flex-col gap-3 relative z-10">
+        <section class="bg-red-600 p-4 rounded-lg flex-col gap-3 relative z-10">
             <section class="w-full gap-2">
-                <div class="w-20 h-20 rounded-lg bg-red-950 flex justify-center items-center">
+                <div class="w-24 h-24 rounded-lg bg-red-700 flex justify-center items-center">
                     <img
                         class="w-5/6 h-5/6 object-contain rounded-lg"
                         :src="require(`@/assets/avatars/${person.avatar}.png`)"
@@ -76,10 +76,13 @@
                     />
                 </div>
                 <section class="c-person-card-header flex-col gap-2 justify-between py-1">
-                    <section class="justify-between items-center">
-                    <h3 class="text-2xl leading-none">
-                        {{ person && person.name }}
-                        </h3>
+                    <section class="justify-between">
+                        <section class="flex-col gap-1">
+                            <h3 class="text-2xl leading-none">
+                                {{ person && person.name }}
+                            </h3>
+                            <p>{{person && person.email}}</p>
+                        </section>
                         <button 
                             class="opacity-85 hover:opacity-100 hover:text-lg ease-in-out duration-300 flex justify-center items-center w-5 h-5"
                             @click="onClickRemove"
@@ -96,12 +99,13 @@
                         </p>
                         <div class="relative">
                             <button
-                                class="c-btn-add-exception w-fit min-w-fit bg-neutral-200/25 py-1 px-2 rounded-full opacity-85 hover:bg-white hover:text-red-950 ease-in-out duration-300 text-sm"
+                                class="c-btn-add-exception w-fit min-w-fit bg-neutral-200/25 py-1 px-2 rounded-full opacity-85 hover:bg-white hover:text-red-950 ease-in-out duration-300 text-sm focus:text-neutral-50
+                                focus:hover:text-red-950"
                                 @click="onClickAddExceptionButton"
                             >
                                 Add exception
                             </button>
-                            <ul class="c-exceptions-modal hidden absolute z-20 opacity-100 bg-red-950 top-8 right-0 flex-col w-full rounded-lg ease-in-out duration-300">
+                            <ul class="c-exceptions-modal hidden absolute z-20 opacity-100 bg-red-700 top-8 right-0 flex-col w-full rounded-lg ease-in-out duration-300">
                                 <li
                                     v-for="(person, i) in people.filter((p, index) => index !== props.index && ((person.exceptions && !person.exceptions.includes(p.name)) ?? true))"
                                     :key="i"

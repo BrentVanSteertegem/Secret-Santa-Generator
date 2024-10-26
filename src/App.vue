@@ -106,44 +106,153 @@
 </script>
 
 <template>
-  <div class="c-app text-neutral-50 w-screen h-screen-full min-h-screen flex justify-center">
-    <div class="c-overlay hidden absolute h-screen w-screen top-0 left-0 z-30"/>
-    <div class="max-w-screen-2xl w-full flex flex-col gap-8 p-4">
-      <div class="flex flex-col gap-4 items-center">
-        <AddForm
-          :people="people"
-          :jumpScareTrigger="jumpScareTrigger"
-          :disabled="generatedList.length > 0"
-          @addPerson="addPerson"
-          @jumpscare="jumpScare"
-        />
-        <button
-          @click="generateList"
-          class="w-60 sm:w-[408px] bg-red-800 border border-neutral-100/70 p-2 rounded-lg hover:bg-red-700 hover:border-white ease-in-out duration-300"
-        >
-          {{generatedList.length === 0 ? 'Generate list' : 'Edit people'}}
-        </button>
-   
-      </div>
-      <PersonList
-        v-if="generatedList.length === 0"
+  <div class="c-app-bg w-screen h-screen fixed top-0 left-0 z-0">
+    <ul aria-hidden="true">
+      <li 
+        class="c-snowflake text-white fixed before:content-['❅'] before:block "
+        v-for="i in 12"
+        :key="i"  
+      ></li>
+    </ul>
+  </div>
+  <div class="text-neutral-50 w-screen flex justify-center">
+  <div class="c-overlay hidden absolute h-screen w-screen top-0 left-0 z-30"/>
+  <div class="max-w-screen-2xl w-full flex flex-col gap-8 p-4">
+    <div class="flex flex-col gap-4 items-center">
+      <AddForm
         :people="people"
-        @removePerson="removePerson"
-        @manageExceptions="manageExceptions"
+        :jumpScareTrigger="jumpScareTrigger"
+        :disabled="generatedList.length > 0"
+        @addPerson="addPerson"
+        @jumpscare="jumpScare"
       />
-      <GeneratedList
-        v-else
-        :generatedList="generatedList"
-      />
+      <button
+        @click="generateList"
+        class="w-60 bg-red-600 p-2 rounded-lg hover:bg-red-500  ease-in-out duration-300 z-10"
+      >
+        {{generatedList.length === 0 ? 'Generate list' : 'Edit people'}}
+      </button>
     </div>
+    <PersonList
+      v-if="generatedList.length === 0"
+      :people="people"
+      @removePerson="removePerson"
+      @manageExceptions="manageExceptions"
+    />
+    <GeneratedList
+      v-else
+      :generatedList="generatedList"
+    />
+  </div>
   </div>
 </template>
 
-<style>
-  .c-app {
-    background:  linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url('./assets/background.jpg') no-repeat center center ;
-    background-size: cover;
+<style scoped>
+.c-app-bg {
+  background: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2) ), url('./assets/background.jpg') no-repeat center center ;
+  background-size: cover;
+}
+  .c-snowflake {
+    text-shadow: 0 0 5px #000;
+    top: -10%;
+    user-select: none;
+    -webkit-user-select: none;
+    animation-name: snowflakes-shake;
+    animation-duration: 3s;
+    animation-timing-function: ease-in-out;
   }
+  
+  .c-snowflake, .c-snowflake:before {
+    animation-iteration-count: infinite;
+    animation-play-state: running;
+  }
+  
+  .c-snowflake:before {
+    animation-duration: 10s;
+    animation-name: snowflakes-fall;
+    animation-timing-function: linear;
+  }
+
+  @keyframes snowflakes-fall {
+    0%{transform:translateY(0)}
+    100%{transform:translateY(110vh)}
+  }
+  @keyframes snowflakes-shake {
+    0%,100%{transform:translateX(0)}
+    50%{transform:translateX(80px)}
+  }
+  
+  .c-snowflake:nth-of-type(0) {
+    left: 1%;
+    animation-delay: 0s;
+  }
+  .c-snowflake:nth-of-type(0):before {
+    animation-delay: 0s;
+  }
+  .c-snowflake:first-of-type {
+    left: 10%;
+    animation-delay: 1s;
+  }
+  .c-snowflake:first-of-type:before, .c-snowflake:nth-of-type(8):before {
+    animation-delay: 1s;
+  }
+  .c-snowflake:nth-of-type(2) {
+    left: 20%;
+    animation-delay: 0.5s;
+  }.c-snowflake:nth-of-type(2):before, .c-snowflake:nth-of-type(6):before {
+    animation-delay: 6s;
+  }.c-snowflake:nth-of-type(3) {
+    left: 30%;
+    animation-delay: 2s;
+  }
+  .c-snowflake:nth-of-type(11):before, .c-snowflake:nth-of-type(3):before {
+    animation-delay: 4s;
+  }
+  .c-snowflake:nth-of-type(4) {
+    left: 40%;
+    animation-delay: 2s;
+  }
+  .c-snowflake:nth-of-type(10):before, .c-snowflake:nth-of-type(4):before {
+    animation-delay: 2s;
+  }
+  .c-snowflake:nth-of-type(5) {
+    left: 50%;
+    animation-delay: 3s;
+  }
+  .c-snowflake:nth-of-type(5):before {
+    animation-delay: 8s;
+  }
+  .c-snowflake:nth-of-type(6) {
+    left: 60%;
+    animation-delay: 2s;
+  }
+  .c-snowflake:nth-of-type(7) {
+    left: 70%;
+    animation-delay: 1s;
+  }
+  .c-snowflake:nth-of-type(7):before {
+    animation-delay: 2.5s;
+  }
+  .c-snowflake:nth-of-type(8) {
+    left: 80%;
+    animation-delay: 0s;
+  }
+  .c-snowflake:nth-of-type(9) {
+    left: 90%;
+    animation-delay: 1.5s;
+  }
+  .c-snowflake:nth-of-type(9):before {
+    animation-delay: 3s;
+  }
+  .c-snowflake:nth-of-type(10) {
+    left: 25%;
+    animation-delay: 0s;
+  }
+  .c-snowflake:nth-of-type(11) {
+    left: 65%;
+    animation-delay: 2.5s;
+  }
+
   .c-overlay {
     background: url('./assets/jelle.png') no-repeat center center;
   }
