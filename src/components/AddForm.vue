@@ -1,5 +1,6 @@
 <script setup>
-  import { ref } from 'vue'
+  import { ref, watch } from 'vue'
+  import FormInput from './FormInput.vue'
 
   const props = defineProps({
     people: Array,
@@ -9,15 +10,40 @@
 
   const emit = defineEmits(['addPerson', 'jumpscare'])
   
-  const name = ref('')
-  const email = ref('')
+  const name = ref(null)
+  const email = ref(null)
   let $nameInput
+  let nameWarnings = []
+  let nameErrors = []
   let $emailInput
-  
-  //TODO: Watch name and notify if already in the list => checkIfNameExists() => You might want to add change the name so it's more clear
+  let emailErrors = []  
+
+ watch(() => name.value, () => {
+   nameWarnings = []
+   nameErrors = []
+
+   if (!name.value || name.value.trim() === '') {
+     return nameErrors.push('Name is required')
+   }
+   
+   if (checkIfNameExists()) {
+     nameWarnings.push('This name is already in the list, we recommend changing it!')
+   }
+  })
+
+  watch(() => email.value, () => {
+    emailErrors = []
+
+    if (!email.value || email.value.trim() === '') {
+      return emailErrors.push('Email is required') //TODO: Validate email
+    }
+
+    if (checkIfEmailExists()) {
+      return emailErrors.push('This email is already in the list')
+    }
+  })
 
   function addPerson() {
-    if (name.value.trim() === '') return window.alert('no name')//TODO: Name required notification
     if (checkForJumpscare()) {
       emit('jumpscare')
       if (checkIfNameExists()) {
@@ -25,19 +51,18 @@
         return
       }
     }
-    if (email.value.trim() === '') return window.alert('no email')// TODO: Email required notification
-    //TODO: Validate email
-    if (checkIfEmailExists()) {
-      alert('This email is already in the list') // TODO: Add a proper notification
+
+    if (nameErrors.length > 0 || emailErrors.length > 0) {
       return
     }
+
     emit('addPerson', { 
-      name: name.value,
-      email: email.value,
+      name: name.value.trim(),
+      email: email.value.trim(),
       avatar: Math.floor(Math.random() * 10)
     })
-    name.value = ''
-    email.value = ''
+    name.value = null
+    email.value = null
     focusName()
   }
 
@@ -50,7 +75,7 @@
   }
 
   function checkForJumpscare() {
-    if (name.value.trim().toLowerCase() === props.jumpScareTrigger) {
+    if (name.value && name.value.trim().toLowerCase() === props.jumpScareTrigger) {
       return true
     }
     return false
@@ -83,38 +108,25 @@
   <div class="flex justify-center bg-inherit">
     <div class="flex flex-col gap-4 bg-red-600 p-4 rounded-lg z-10">
       <div class="flex flex-col gap-2">
-        <div class="flex flex-col">
-          <label
-            for="name"
-            class="font-bold"
-          >
-            Name:
-          </label>
-          <input
-            type="text"
+          <FormInput 
             v-model="name"
-            placeholder="Studarian"
+            :type="'text'"
+            :label="'Name:'"
+            :placeholder="'Studarian'"
             @keypress="listenForNameChange"
             :disabled="props.disabled"
-            class="w-60 border bg-inherit p-2 rounded-lg text-center focus:outline-none placeholder:text-neutral-200/90 disabled:bg-neutral-200/25" 
+            :errors="nameErrors"
+            :warnings="nameWarnings"
           />
-        </div>
-        <div class="flex flex-col">
-          <label
-            for="email"
-            class="font-bold"
-          >
-            Email:
-          </label>
-          <input
-            type="email"
+          <FormInput 
             v-model="email"
-            placeholder="studarian@studaro.com"
+            :type="'email'"
+            :label="'Email:'"
+            :placeholder="'studarian@studaro.com'"
             @keypress="listenForEmailChange"
             :disabled="props.disabled"
-            class="w-60 border bg-inherit p-2 rounded-lg text-center focus:outline-none placeholder:text-neutral-200/90 disabled:bg-neutral-200/25" 
+            :errors="emailErrors"
           />
-        </div>
       </div>
       <button
         @click="addPerson"
