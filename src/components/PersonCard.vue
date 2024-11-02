@@ -77,11 +77,11 @@
                 </div>
                 <section class="c-person-card-header flex-col gap-2 justify-between py-1">
                     <section class="justify-between">
-                        <section class="flex-col gap-1">
-                            <h3 class="text-2xl leading-none">
+                        <section class="c-person-card-details flex-col gap-1">
+                            <h3 class="text-2xl leading-none text-ellipsis overflow-hidden w-full">
                                 {{ person && person.name }}
                             </h3>
-                            <p>{{person && person.email}}</p>
+                            <p class="text-ellipsis overflow-hidden">{{person && person.email}}</p>
                         </section>
                         <button 
                             class="opacity-85 hover:opacity-100 hover:text-lg ease-in-out duration-300 flex justify-center items-center w-5 h-5"
@@ -109,13 +109,13 @@
                                 <li
                                     v-for="(person, i) in people.filter((p, index) => index !== props.index && ((person.exceptions && !person.exceptions.includes(p.name)) ?? true))"
                                     :key="i"
-                                    class=""
                                 >
                                     <button
                                         @click="(e) => onClickException(e, person.name)"
-                                        class="py-1 px-2 hover:bg-white hover:text-red-950 ease-in-out duration-300 min-w-full text-left hover:rounded-lg"
+                                        class="py-1 px-2 hover:bg-white hover:text-red-950 ease-in-out duration-300 min-w-full text-left hover:rounded-lg overflow-hidden text-ellipsis w-full"
                                     >
                                         {{person.name}}
+                                        <span class="text-sm text-inherit/75">({{person.email}})</span>
                                     </button>
                                 </li>
                             </ul>
@@ -149,5 +149,9 @@
 <style scoped>
     .c-person-card-header {
         width: calc(100% - 5.5rem);
+    }
+
+    .c-person-card-details {
+        width: calc(100% - 2rem);
     }
 </style>

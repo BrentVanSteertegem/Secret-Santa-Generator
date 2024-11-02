@@ -56,7 +56,8 @@
             :placeholder="props.placeholder || ''"
             @keypress="onKeyPress"
             :disabled="props.disabled || false"
-            class="w-60 bg-neutral-50 text-red-900 p-2 rounded-lg text-center focus:outline-none placeholder:text-red-950/25 disabled:bg-neutral-200/25 relative" 
+            class="w-60 bg-neutral-50 text-red-900 p-2 rounded-lg text-center focus:outline-none placeholder:text-red-950/25 disabled:bg-neutral-200/25 border-2" 
+            :class="props.errors && props.errors.length > 0 ? 'border-red-800' : (props.warnings && props.warnings.length > 0 ? 'border-orange-400' : 'border-inherit')"
             />
             <span 
                 v-if="props.warnings && props.warnings.length > 0 && (!props.errors || props.errors.length === 0)"

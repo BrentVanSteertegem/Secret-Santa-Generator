@@ -4,6 +4,7 @@
   import AddForm from './components/AddForm.vue'
   import PersonList from './components/PersonList.vue'
   import GeneratedList from './components/GeneratedList.vue'
+  import AppModal from './components/AppModal.vue'
 
   let $window
   onMounted(() => {
@@ -28,6 +29,7 @@
   
   const people = ref([])
   const generatedList = ref([])
+  const errors = ref([])
 
   function addPerson(person) {
     people.value.push(person)
@@ -49,12 +51,12 @@
       return
     }
     if (people.value.length < 2) {
-      window.alert('Need at least 2 people to generate list')
+      errors.value.push('Need at least 2 people to generate list')
       return
     }
 
     const sortedPeople = [...people.value].sort((a,b) => {
-      return (a.exceptions && a.exceptions.length || 0) - (b.exceptions && b.exceptions.length || 0)
+      return (b.exceptions && b.exceptions.length || 0) - (a.exceptions && a.exceptions.length || 0)
     })
     
     let success = false
@@ -64,26 +66,30 @@
       const list = []
       const remainingPeople = [...sortedPeople]
       sortedPeople.forEach(person => {
-        const availablePeople = remainingPeople.filter(p => p.name !== person.name && (person.exceptions ? !person.exceptions.includes(p.name) : true))
+        const availablePeople = remainingPeople.filter(p => p.email !== person.email && (person.exceptions ? !person.exceptions.includes(p.email) : true))
         if (!availablePeople || availablePeople.length === 0) {
-          if (tries < 20) {
+          if (tries < 30) {
             tries++
           } else {
-            window.alert('Unable to generate list, please adapt exceptions')
+            errors.value.push('Unable to generate list, please adapt exceptions')
             failed = true
           }
           return
         }
         const randomPerson = availablePeople[Math.floor(Math.random() * availablePeople.length)]
         list.push({
-          from: person.name,
-          to: randomPerson.name
+          from: person,
+          to: randomPerson
         })
         remainingPeople.splice(remainingPeople.indexOf(randomPerson), 1)
       })
       if (list.length === people.value.length) {
         success = true
         generatedList.value = [...list]
+      } else {
+        errors.value.push('Unable to generate list, please try again')
+        failed = true
+        return
       }
     }
   }
@@ -103,6 +109,10 @@
       }, 200)
     }, 2000)
   }
+
+  function closeModal() {
+    errors.value = []
+  }
 </script>
 
 <template>
@@ -116,35 +126,41 @@
     </ul>
   </div>
   <div class="text-neutral-50 w-screen flex justify-center">
-  <div class="c-overlay hidden absolute h-screen w-screen top-0 left-0 z-30"/>
-  <div class="max-w-screen-2xl w-full flex flex-col gap-8 p-4">
-    <div class="flex flex-col gap-4 items-center">
-      <AddForm
+   <div class="c-overlay hidden absolute h-screen w-screen top-0 left-0 z-30"/>
+    <div class="max-w-screen-2xl w-full flex flex-col gap-8 p-4">
+      <div class="flex flex-col gap-4 items-center">
+        <AddForm
+          :people="people"
+          :jumpScareTrigger="jumpScareTrigger"
+          :disabled="generatedList.length > 0"
+          @addPerson="addPerson"
+          @jumpscare="jumpScare"
+        />
+        <button
+          @click="generateList"
+          class="w-60 bg-red-600 p-2 rounded-lg hover:bg-red-500  ease-in-out duration-300 z-10"
+        >
+          {{generatedList.length === 0 ? 'Generate list' : 'Edit people'}}
+        </button>
+      </div>
+      <PersonList
+        v-if="generatedList.length === 0"
         :people="people"
-        :jumpScareTrigger="jumpScareTrigger"
-        :disabled="generatedList.length > 0"
-        @addPerson="addPerson"
-        @jumpscare="jumpScare"
+        @removePerson="removePerson"
+        @manageExceptions="manageExceptions"
       />
-      <button
-        @click="generateList"
-        class="w-60 bg-red-600 p-2 rounded-lg hover:bg-red-500  ease-in-out duration-300 z-10"
-      >
-        {{generatedList.length === 0 ? 'Generate list' : 'Edit people'}}
-      </button>
+      <GeneratedList
+        v-else
+        :generatedList="generatedList"
+      />
     </div>
-    <PersonList
-      v-if="generatedList.length === 0"
-      :people="people"
-      @removePerson="removePerson"
-      @manageExceptions="manageExceptions"
-    />
-    <GeneratedList
-      v-else
-      :generatedList="generatedList"
-    />
   </div>
-  </div>
+  <AppModal
+    v-if="errors && errors.length > 0"
+    @close="closeModal" 
+  >
+    <p>{{errors && errors[0]}}</p>
+  </AppModal>
 </template>
 
 <style scoped>
