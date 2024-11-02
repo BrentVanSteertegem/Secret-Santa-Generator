@@ -5,6 +5,7 @@
   import PersonList from './components/PersonList.vue'
   import ReviewList from './components/ReviewList.vue'
   import AppModal from './components/AppModal.vue'
+  import MailPreviewModal from './components/MailPreviewModal.vue'
 
   let $window
   onMounted(() => {
@@ -187,21 +188,11 @@
   >
     <p>{{errors && errors[0]}}</p>
   </AppModal>
-  <AppModal
+  <MailPreviewModal
     v-if="generatedList && generatedList.length > 0"
-    :size="'full'"
+    :generatedList="generatedList"
     @close="deleteGeneratedList"
-  >
-    <ul>
-      <li
-        v-for="(person, i) in generatedList"
-        :key="i"
-        class="flex justify-between"
-      >
-        <p>{{person.from.name}} buys for {{person.to.name}}</p>
-      </li>
-    </ul>
-  </AppModal>
+  ></MailPreviewModal>
 </template>
 
 <style scoped>
