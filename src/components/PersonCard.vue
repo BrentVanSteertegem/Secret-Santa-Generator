@@ -46,14 +46,14 @@
         $exceptionsModal.classList.toggle('flex')
     }
     
-    function onClickException(e, name) {
+    function onClickException(e, targetPerson) {
         e.stopPropagation()
 
         if (person.exceptions && props.people.length - person.exceptions.length < 3 || props.people.length < 3) {
             return window.alert('Person needs at least available person to buy for')
         }
 
-        emit('manageExceptions', props.index, person.exceptions && [...person.exceptions, name] || [name])
+        emit('manageExceptions', props.index, person.exceptions && [...person.exceptions, targetPerson] || [targetPerson])
     }
 
     function onClickRemoveException(index) {
@@ -107,11 +107,11 @@
                             </button>
                             <ul class="c-exceptions-modal hidden absolute z-20 opacity-100 bg-red-700 top-8 right-0 flex-col w-full rounded-lg ease-in-out duration-300">
                                 <li
-                                    v-for="(person, i) in people.filter((p, index) => index !== props.index && ((person.exceptions && !person.exceptions.includes(p.name)) ?? true))"
+                                    v-for="(person, i) in people.filter((p, index) => index !== props.index && ((person.exceptions && !person.exceptions.includes(p)) ?? true))"
                                     :key="i"
                                 >
                                     <button
-                                        @click="(e) => onClickException(e, person.name)"
+                                        @click="(e) => onClickException(e, person)"
                                         class="py-1 px-2 hover:bg-white hover:text-red-950 ease-in-out duration-300 min-w-full text-left hover:rounded-lg overflow-hidden text-ellipsis w-full"
                                     >
                                         {{person.name}}
@@ -124,7 +124,7 @@
                 </section>
             </section>
             <ul 
-                class="flex flex-col gap-1"
+                class="flex flex-col gap-1 w-full"
                 v-if="person && person.exceptions && person.exceptions.length > 0"
             >
                 <li
@@ -132,7 +132,15 @@
                     :key="i"
                     class="bg-neutral-200/10 p-2 rounded-lg flex justify-between items-center"
                 >
-                    <p>{{exception}}</p>
+                    <p class="overflow-hidden text-ellipsis w-full">
+                        {{exception.name}}
+                        <span
+                            v-if="people.filter(p => p.name === exception.name).length > 1"
+                            class="text-sm text-inherit/75"
+                        >
+                            ({{exception.email}})
+                        </span>
+                    </p>
                     <button 
                         @click="() => onClickRemoveException(i)"
                         class="opacity-85 hover:opacity-100 hover:text-lg ease-in-out duration-300 flex justify-center items-center w-5 h-5"

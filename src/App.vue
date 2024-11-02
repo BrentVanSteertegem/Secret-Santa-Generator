@@ -3,7 +3,7 @@
   import './styles/index.css'
   import AddForm from './components/AddForm.vue'
   import PersonList from './components/PersonList.vue'
-  import GeneratedList from './components/GeneratedList.vue'
+  import ReviewList from './components/ReviewList.vue'
   import AppModal from './components/AppModal.vue'
 
   let $window
@@ -30,19 +30,29 @@
   const people = ref([])
   const generatedList = ref([])
   const errors = ref([])
+  let isReviewing = ref(false)
 
   function addPerson(person) {
     people.value.push(person)
   }
 
-  function removePerson(name) {
+  function removePerson(index) {
     const peopleCopy = people.value
-    peopleCopy.splice(people.value[`${name}`], 1)
+    peopleCopy.forEach(person => {
+      if (person.exceptions && person.exceptions.includes(people.value[index])) {
+        person.exceptions.splice(person.exceptions.indexOf(people.value[index]), 1)
+      }
+    })
+    peopleCopy.splice(index, 1)
     people.value = [...peopleCopy]
   }
 
   function manageExceptions(name, exceptions) {
     people.value[`${name}`].exceptions = exceptions
+  }
+
+  function toggleReviewList() {
+    isReviewing.value = !isReviewing.value
   }
 
   function generateList() {
@@ -94,6 +104,10 @@
     }
   }
 
+  function deleteGeneratedList() {
+    generatedList.value = []
+  }
+
   let $overlay
   function setOverlay() {
     $overlay = document.querySelector('.c-overlay')
@@ -132,42 +146,69 @@
         <AddForm
           :people="people"
           :jumpScareTrigger="jumpScareTrigger"
-          :disabled="generatedList.length > 0"
+          :disabled="isReviewing"
           @addPerson="addPerson"
           @jumpscare="jumpScare"
         />
         <button
-          @click="generateList"
+          @click="toggleReviewList"
           class="w-60 bg-red-600 p-2 rounded-lg hover:bg-red-500  ease-in-out duration-300 z-10"
         >
-          {{generatedList.length === 0 ? 'Generate list' : 'Edit people'}}
+          {{isReviewing ? 'Edit people' : 'Generate list'}}
         </button>
       </div>
       <PersonList
-        v-if="generatedList.length === 0"
+        v-if="!isReviewing"
         :people="people"
         @removePerson="removePerson"
         @manageExceptions="manageExceptions"
       />
-      <GeneratedList
+      <div
         v-else
-        :generatedList="generatedList"
-      />
+        class="flex justify-center flex-col gap-4 items-center"
+      >
+        <ReviewList
+          :people="people"
+        />
+        <button
+          v-if="people.length > 1"
+          @click="generateList"
+          class="w-60 bg-red-600 p-2 rounded-lg hover:bg-red-500  ease-in-out duration-300 relative"
+        >
+          Generate list
+      </button>
+      </div>
     </div>
   </div>
   <AppModal
     v-if="errors && errors.length > 0"
+    :clickToClose="true"
     @close="closeModal" 
   >
     <p>{{errors && errors[0]}}</p>
   </AppModal>
+  <AppModal
+    v-if="generatedList && generatedList.length > 0"
+    :size="'full'"
+    @close="deleteGeneratedList"
+  >
+    <ul>
+      <li
+        v-for="(person, i) in generatedList"
+        :key="i"
+        class="flex justify-between"
+      >
+        <p>{{person.from.name}} buys for {{person.to.name}}</p>
+      </li>
+    </ul>
+  </AppModal>
 </template>
 
 <style scoped>
-.c-app-bg {
-  background: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2) ), url('./assets/background.jpg') no-repeat center center ;
-  background-size: cover;
-}
+  .c-app-bg {
+    background: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2) ), url('./assets/background.jpg') no-repeat center center ;
+    background-size: cover;
+  }
   .c-snowflake {
     text-shadow: 0 0 5px #000;
     top: -10%;
