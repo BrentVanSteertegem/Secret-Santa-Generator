@@ -1,4 +1,6 @@
 <script setup>
+    import { ref } from 'vue'
+    import { sendEmail } from '@/scripts/sendEmail'
     import AppModal from './AppModal.vue'
 
     const props = defineProps({
@@ -7,17 +9,24 @@
 
     const emit = defineEmits(['close'])
 
+    const emailsHaveBeenSent = ref(false)
+
     function deleteGeneratedList() {
         emit('close')
     }
 
     function sendMails() {
-        console.log('Sending mails', props.generatedList)
+        sendEmail(props.generatedList[0].from, props.generatedList[0].to)
+        props.generatedList.forEach(match => {
+            sendEmail(match.from, match.to)
+        })
+        emailsHaveBeenSent.value = true
     }
 </script>
 
 <template>
     <AppModal
+        v-if="!emailsHaveBeenSent"
         :size="'full'"
         @close="deleteGeneratedList"
     >
@@ -45,10 +54,11 @@
                     <p>looks like you have to buy a gift for</p>
                     <p
                         contenteditable="false"
-                        class='text-2xl text-red-600 pt-2'
+                        class='text-2xl text-red-600 py-2'
                     >
                         me
                     </p>
+                    <p class="pt-4">Happy hunting!</p>
                 </div>
             </div>
         </div>
@@ -66,5 +76,12 @@
                 Send mails
             </button>
         </section>
+    </AppModal>
+    <AppModal
+        v-else
+        :clickToClose="true"
+        @close="deleteGeneratedList"
+    > 
+        <h3 class="text-lg">Emails have been sent!</h3>  
     </AppModal>
 </template>
