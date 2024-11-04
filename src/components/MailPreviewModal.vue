@@ -16,9 +16,8 @@
     }
 
     function sendMails() {
-        sendEmail(props.generatedList[0].from, props.generatedList[0].to)
-        props.generatedList.forEach(match => {
-            sendEmail(match.from, match.to)
+        props.generatedList.forEach((match, i) => {
+           setTimeout(() => sendEmail(match.from, match.to), 1200 * i)
         })
         emailsHaveBeenSent.value = true
     }
